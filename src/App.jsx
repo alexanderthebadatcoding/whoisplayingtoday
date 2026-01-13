@@ -8,16 +8,6 @@ const SPORTS = [
     url: "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard",
   },
   {
-    slug: "ncaam",
-    title: "College Mens 🏀",
-    url: "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard",
-  },
-  {
-    slug: "ncaaw",
-    title: "College Womens 🏀",
-    url: "https://site.api.espn.com/apis/site/v2/sports/basketball/womens-college-basketball/scoreboard",
-  },
-  {
     slug: "ncaav",
     title: "College Womens Volleyball 🏐",
     url: "https://site.api.espn.com/apis/site/v2/sports/volleyball/womens-college-volleyball/scoreboard",
