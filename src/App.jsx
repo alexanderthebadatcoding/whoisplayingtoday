@@ -423,16 +423,6 @@ const SPORTS = [
     url: "https://site.api.espn.com/apis/site/v2/sports/soccer/esp.copa_del_rey/scoreboard",
   },
   {
-    slug: "ger.1",
-    title: "German Bundesliga ⚽️",
-    url: "https://site.api.espn.com/apis/site/v2/sports/soccer/ger.1/scoreboard",
-  },
-  {
-    slug: "ger.dfb_pokal",
-    title: "German DFB Pokal ⚽️",
-    url: "https://site.api.espn.com/apis/site/v2/sports/soccer/ger.dfb_pokal/scoreboard",
-  },
-  {
     slug: "usa.1",
     title: "MLS ⚽️",
     url: "https://site.api.espn.com/apis/site/v2/sports/soccer/usa.1/scoreboard",
