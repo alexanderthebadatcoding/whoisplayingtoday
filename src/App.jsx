@@ -38,41 +38,6 @@ const SPORTS = [
     url: "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-olympics-basketball/scoreboard",
   },
   {
-    slug: "nba-development",
-    title: "NBA G League 🏀",
-    url: "https://site.api.espn.com/apis/site/v2/sports/basketball/nba-development/scoreboard",
-  },
-  {
-    slug: "nba-summer-california",
-    title: "NBA Summer League - California 🏀",
-    url: "https://site.api.espn.com/apis/site/v2/sports/basketball/nba-summer-california/scoreboard",
-  },
-  {
-    slug: "nba-summer-golden-state",
-    title: "NBA Summer League - Golden State 🏀",
-    url: "https://site.api.espn.com/apis/site/v2/sports/basketball/nba-summer-golden-state/scoreboard",
-  },
-  {
-    slug: "nba-summer-las-vegas",
-    title: "NBA Summer League - Las Vegas 🏀",
-    url: "https://site.api.espn.com/apis/site/v2/sports/basketball/nba-summer-las-vegas/scoreboard",
-  },
-  {
-    slug: "nba-summer-orlando",
-    title: "NBA Summer League - Orlando 🏀",
-    url: "https://site.api.espn.com/apis/site/v2/sports/basketball/nba-summer-orlando/scoreboard",
-  },
-  {
-    slug: "nba-summer-sacramento",
-    title: "NBA Summer League - Sacramento 🏀",
-    url: "https://site.api.espn.com/apis/site/v2/sports/basketball/nba-summer-sacramento/scoreboard",
-  },
-  {
-    slug: "nba-summer-utah",
-    title: "NBA Summer League - Utah 🏀",
-    url: "https://site.api.espn.com/apis/site/v2/sports/basketball/nba-summer-utah/scoreboard",
-  },
-  {
     slug: "nbl",
     title: "NBL 🏀",
     url: "https://site.api.espn.com/apis/site/v2/sports/basketball/nbl/scoreboard",
@@ -111,11 +76,6 @@ const SPORTS = [
     slug: "xfl",
     title: "XFL 🏈",
     url: "https://site.api.espn.com/apis/site/v2/sports/football/xfl/scoreboard",
-  },
-  {
-    slug: "nhl",
-    title: "NHL 🏒",
-    url: "https://site.api.espn.com/apis/site/v2/sports/hockey/nhl/scoreboard",
   },
   {
     slug: "hockey-world-cup",
@@ -173,49 +133,14 @@ const SPORTS = [
     url: "https://site.api.espn.com/apis/site/v2/sports/baseball/dominican-winter-league/scoreboard",
   },
   {
-    slug: "llb",
-    title: "Little League Baseball ⚾",
-    url: "https://site.api.espn.com/apis/site/v2/sports/baseball/llb/scoreboard",
-  },
-  {
-    slug: "lls",
-    title: "Little League Softball 🥎",
-    url: "https://site.api.espn.com/apis/site/v2/sports/baseball/lls/scoreboard",
-  },
-  {
     slug: "mexican-winter-league",
     title: "Mexican Winter League ⚾",
     url: "https://site.api.espn.com/apis/site/v2/sports/baseball/mexican-winter-league/scoreboard",
   },
   {
-    slug: "mlb",
-    title: "MLB ⚾",
-    url: "https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/scoreboard",
-  },
-  {
     slug: "olympics-baseball",
     title: "Olympic Baseball ⚾",
     url: "https://site.api.espn.com/apis/site/v2/sports/baseball/olympics-baseball/scoreboard",
-  },
-  {
-    slug: "puerto-rican-winter-league",
-    title: "Puerto Rican Winter League ⚾",
-    url: "https://site.api.espn.com/apis/site/v2/sports/baseball/puerto-rican-winter-league/scoreboard",
-  },
-  {
-    slug: "venezuelan-winter-league",
-    title: "Venezuelan Winter League ⚾",
-    url: "https://site.api.espn.com/apis/site/v2/sports/baseball/venezuelan-winter-league/scoreboard",
-  },
-  {
-    slug: "world-baseball-classic",
-    title: "World Baseball Classic ⚾",
-    url: "https://site.api.espn.com/apis/site/v2/sports/baseball/world-baseball-classic/scoreboard",
-  },
-  {
-    slug: "ncaab",
-    title: "College Baseball ⚾️",
-    url: "https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/scoreboard",
   },
   {
     slug: "mls",
@@ -256,11 +181,6 @@ const SPORTS = [
     slug: "uefa",
     title: "UEFA Champions League ⚽️",
     url: "https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.champions/scoreboard",
-  },
-  {
-    slug: "uefaeu",
-    title: "UEFA Europa League ⚽️",
-    url: "https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.europa/scoreboard",
   },
   {
     slug: "uefaNations",
@@ -388,11 +308,6 @@ const SPORTS = [
     url: "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.wwc/scoreboard",
   },
   {
-    slug: "uefa.champions",
-    title: "UEFA Champions League ⚽️",
-    url: "https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.champions/scoreboard",
-  },
-  {
     slug: "eng.1",
     title: "English Premier League ⚽️",
     url: "https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard",
@@ -423,11 +338,6 @@ const SPORTS = [
     url: "https://site.api.espn.com/apis/site/v2/sports/soccer/esp.copa_del_rey/scoreboard",
   },
   {
-    slug: "usa.1",
-    title: "MLS ⚽️",
-    url: "https://site.api.espn.com/apis/site/v2/sports/soccer/usa.1/scoreboard",
-  },
-  {
     slug: "concacaf.leagues.cup",
     title: "Leagues Cup ⚽️",
     url: "https://site.api.espn.com/apis/site/v2/sports/soccer/concacaf.leagues.cup/scoreboard",
@@ -441,11 +351,6 @@ const SPORTS = [
     slug: "uefa.wchampions",
     title: "UEFA Women's Champions League ⚽️",
     url: "https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.wchampions/scoreboard",
-  },
-  {
-    slug: "usa.nwsl",
-    title: "NWSL ⚽️",
-    url: "https://site.api.espn.com/apis/site/v2/sports/soccer/usa.nwsl/scoreboard",
   },
   {
     slug: "usa.nwsl.cup",
@@ -466,11 +371,6 @@ const SPORTS = [
     slug: "mex.1",
     title: "Liga MX ⚽️",
     url: "https://site.api.espn.com/apis/site/v2/sports/soccer/mex.1/scoreboard",
-  },
-  {
-    slug: "caf.nations",
-    title: "Africa Cup of Nations ⚽️",
-    url: "https://site.api.espn.com/apis/site/v2/sports/soccer/caf.nations/scoreboard",
   },
   {
     slug: "ita.1",
