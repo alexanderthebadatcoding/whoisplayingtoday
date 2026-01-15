@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { RefreshCw } from "lucide-react";
 
 const SPORTS = [
@@ -398,6 +398,16 @@ function App() {
   const [gamesData, setGamesData] = useState({});
   const [loading, setLoading] = useState(true);
   const [lastUpdate, setLastUpdate] = useState(new Date());
+  const [seasonCache, setSeasonCache] = useState({});
+  const [lastSeasonCheck, setLastSeasonCheck] = useState(null);
+
+  const isInSeason = (startDate, endDate) => {
+    if (!startDate || !endDate) return true; // If no season dates, assume active
+    const today = new Date();
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    return today >= start && today <= end;
+  };
 
   const isToday = (dateString) => {
     const gameDate = new Date(dateString);
@@ -408,14 +418,38 @@ function App() {
       gameDate.getFullYear() === today.getFullYear()
     );
   };
+  const shouldRecheckSeasons = () => {
+    if (!lastSeasonCheck) return true;
+    const hoursSinceCheck = (new Date() - lastSeasonCheck) / (1000 * 60 * 60);
+    return hoursSinceCheck >= 24; // Re-check season dates once per day
+  };
 
-  const fetchGames = async () => {
+  const fetchGames = useCallback(async (forceSeasonCheck = false) => {
     const results = {};
+    const newSeasonCache = { ...seasonCache };
+    const recheckSeasons = forceSeasonCheck || shouldRecheckSeasons();
 
     for (const sport of SPORTS) {
       try {
+        // Use cached season info if available and not forcing recheck
+        if (!recheckSeasons && seasonCache[sport.slug] === false) {
+          continue; // Skip - we know it's out of season
+        }
         const response = await fetch(sport.url);
         const data = await response.json();
+
+        // Check if today is within the season
+        const seasonStart = data?.leagues?.[0]?.season?.startDate;
+        const seasonEnd = data?.leagues?.[0]?.season?.endDate;
+        const inSeason = isInSeason(seasonStart, seasonEnd);
+
+        // Update cache
+        newSeasonCache[sport.slug] = inSeason;
+
+        if (!inSeason) {
+          continue;
+        }
+
         // Filter games to only include today's games
         if (data.events && data.events.length > 0) {
           const todaysGames = data.events.filter((event) =>
@@ -434,18 +468,31 @@ function App() {
         console.error(`Error fetching ${sport.title}:`, error);
       }
     }
+    if (recheckSeasons) {
+      setSeasonCache(newSeasonCache);
+      setLastSeasonCheck(new Date());
+    }
 
     setGamesData(results);
     setLoading(false);
     setLastUpdate(new Date());
-  };
+  });
 
   useEffect(() => {
-    setLoading(true);
-    fetchGames();
-    const interval = setInterval(fetchGames, 60000); // Refresh every minute
+    // Defer calling fetchGames to the next tick so any setState it performs
+    // does not run synchronously inside this effect (avoids cascading renders)
+    const id = setTimeout(() => {
+      fetchGames();
+    }, 0);
+    return () => clearTimeout(id);
+  }, [fetchGames]); // Now properly depends on fetchGames
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchGames(false); // Don't force season check on auto-refresh
+    }, 60000); // Refresh every minute
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchGames]); // Depend on fetchGames
 
   const formatGameDate = (dateString) => {
     const date = new Date(dateString);
