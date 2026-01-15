@@ -33,6 +33,16 @@ const SPORTS = [
     url: "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard",
   },
   {
+    slug: "American-college-basketball",
+    title: "American Conference 🏀",
+    url: "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard?groups=62",
+  },
+  {
+    slug: "summit-college-basketball",
+    title: "Summit League College Basketball 🏀",
+    url: "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard?groups=49",
+  },
+  {
     slug: "mens-olympics-basketball",
     title: "Men's Olympic Basketball 🏀",
     url: "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-olympics-basketball/scoreboard",
