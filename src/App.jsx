@@ -383,11 +383,6 @@ const SPORTS = [
     url: "https://site.api.espn.com/apis/site/v2/sports/soccer/mex.1/scoreboard",
   },
   {
-    slug: "ita.1",
-    title: "Italian Serie A ⚽️",
-    url: "https://site.api.espn.com/apis/site/v2/sports/soccer/ita.1/scoreboard",
-  },
-  {
     slug: "ita.coppa_italia",
     title: "Coppa Italia ⚽️",
     url: "https://site.api.espn.com/apis/site/v2/sports/soccer/ita.coppa_italia/scoreboard",
