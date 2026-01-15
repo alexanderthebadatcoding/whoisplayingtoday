@@ -39,7 +39,7 @@ const SPORTS = [
   },
   {
     slug: "summit-college-basketball",
-    title: "Summit League College Basketball 🏀",
+    title: "Summit League 🏀",
     url: "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard?groups=49",
   },
   {
