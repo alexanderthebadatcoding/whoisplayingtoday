@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { RefreshCw } from "lucide-react";
 
 const SPORTS = [
@@ -398,8 +398,49 @@ function App() {
   const [gamesData, setGamesData] = useState({});
   const [loading, setLoading] = useState(true);
   const [lastUpdate, setLastUpdate] = useState(new Date());
-  const [seasonCache, setSeasonCache] = useState({});
-  const [lastSeasonCheck, setLastSeasonCheck] = useState(null);
+  const [seasonCache, setSeasonCache] = useState(() => {
+    try {
+      const raw = localStorage.getItem("seasonCache");
+      return raw ? JSON.parse(raw) : {};
+    } catch {
+      return {};
+    }
+  });
+  const [lastSeasonCheck, setLastSeasonCheck] = useState(() => {
+    try {
+      const raw = localStorage.getItem("lastSeasonCheck");
+      return raw ? new Date(raw) : null;
+    } catch {
+      return null;
+    }
+  });
+
+  // Track only-live-refresh state so the UI can show a focused spinner
+  const [isRefreshingLive, setIsRefreshingLive] = useState(false);
+
+  // Refs to avoid stale closures inside a stable fetchGames callback
+  const seasonCacheRef = useRef(seasonCache);
+  const lastSeasonCheckRef = useRef(lastSeasonCheck);
+  const fetchInFlightRef = useRef(false);
+
+  useEffect(() => {
+    seasonCacheRef.current = seasonCache;
+    try {
+      localStorage.setItem("seasonCache", JSON.stringify(seasonCache));
+    } catch {
+      // Silently ignore localStorage errors (e.g., quota exceeded, private browsing)
+    }
+  }, [seasonCache]);
+
+  useEffect(() => {
+    lastSeasonCheckRef.current = lastSeasonCheck;
+    try {
+      if (lastSeasonCheck)
+        localStorage.setItem("lastSeasonCheck", lastSeasonCheck.toISOString());
+    } catch (e) {
+      // Silently ignore localStorage errors (e.g., quota exceeded, private browsing)
+    }
+  }, [lastSeasonCheck]);
 
   const isInSeason = (startDate, endDate) => {
     if (!startDate || !endDate) return true; // If no season dates, assume active
@@ -410,6 +451,7 @@ function App() {
   };
 
   const isToday = (dateString) => {
+    if (!dateString) return false;
     const gameDate = new Date(dateString);
     const today = new Date();
     return (
@@ -418,104 +460,223 @@ function App() {
       gameDate.getFullYear() === today.getFullYear()
     );
   };
+
   const shouldRecheckSeasons = () => {
-    if (!lastSeasonCheck) return true;
-    const hoursSinceCheck = (new Date() - lastSeasonCheck) / (1000 * 60 * 60);
+    const last = lastSeasonCheckRef.current;
+    if (!last) return true;
+    const hoursSinceCheck = (new Date() - new Date(last)) / (1000 * 60 * 60);
     return hoursSinceCheck >= 24; // Re-check season dates once per day
   };
 
-  const fetchGames = useCallback(async (forceSeasonCheck = false) => {
-    const results = {};
-    const newSeasonCache = { ...seasonCache };
-    const recheckSeasons = forceSeasonCheck || shouldRecheckSeasons();
+  // Get list of sport slugs that currently have live (in-progress) games
+  const getLiveSportsFromGamesData = () => {
+    const live = [];
+    for (const [slug, { games }] of Object.entries(gamesData)) {
+      if (!games || games.length === 0) continue;
+      const hasLive = games.some((g) => {
+        const comp = g?.competitions?.[0];
+        const state = comp?.status?.type?.state;
+        return state === "in";
+      });
+      if (hasLive) live.push(slug);
+    }
+    return live;
+  };
 
-    for (const sport of SPORTS) {
-      try {
-        // Use cached season info if available and not forcing recheck
-        if (!recheckSeasons && seasonCache[sport.slug] === false) {
-          continue; // Skip - we know it's out of season
-        }
-        const response = await fetch(sport.url);
-        const data = await response.json();
+  // Fetch helper for a single sport; returns an object to merge into results or null
+  const fetchSport = async (sport, { recheckSeasons = false } = {}) => {
+    try {
+      // Skip if cached out-of-season and not rechecking
+      if (!recheckSeasons && seasonCacheRef.current[sport.slug] === false)
+        return null;
 
-        // Check if today is within the season
-        const seasonStart = data?.leagues?.[0]?.season?.startDate;
-        const seasonEnd = data?.leagues?.[0]?.season?.endDate;
-        const inSeason = isInSeason(seasonStart, seasonEnd);
-
-        // Update cache
-        newSeasonCache[sport.slug] = inSeason;
-
-        if (!inSeason) {
-          continue;
-        }
-
-        // Filter games to only include today's games
-        if (data.events && data.events.length > 0) {
-          const todaysGames = data.events.filter((event) =>
-            isToday(event.competitions[0].startDate)
-          );
-
-          // Only add to results if there are games today
-          if (todaysGames.length > 0) {
-            results[sport.slug] = {
-              title: sport.title,
-              games: todaysGames,
-            };
-          }
-        }
-      } catch (error) {
-        console.error(`Error fetching ${sport.title}:`, error);
+      const res = await fetch(sport.url);
+      if (!res.ok) {
+        console.error(`Fetch failed for ${sport.title}: ${res.status}`);
+        return null;
       }
-    }
-    if (recheckSeasons) {
-      setSeasonCache(newSeasonCache);
-      setLastSeasonCheck(new Date());
-    }
+      const data = await res.json();
 
-    setGamesData(results);
-    setLoading(false);
-    setLastUpdate(new Date());
-  });
+      const seasonStart = data?.leagues?.[0]?.season?.startDate;
+      const seasonEnd = data?.leagues?.[0]?.season?.endDate;
+      const inSeason = isInSeason(seasonStart, seasonEnd);
+
+      // If out of season, update cache and skip
+      if (!inSeason) {
+        return { slug: sport.slug, value: null, inSeason: false };
+      }
+
+      // Filter today's games
+      const todaysGames =
+        Array.isArray(data.events) && data.events.length > 0
+          ? data.events.filter((event) =>
+              isToday(event?.competitions?.[0]?.startDate)
+            )
+          : [];
+
+      if (todaysGames.length === 0) {
+        return { slug: sport.slug, value: null, inSeason: true };
+      }
+
+      return {
+        slug: sport.slug,
+        value: {
+          title: sport.title,
+          games: todaysGames,
+        },
+        inSeason: true,
+      };
+    } catch (err) {
+      console.error(`Error fetching ${sport.title}:`, err);
+      return null;
+    }
+  };
+
+  // Stable fetchGames using refs to avoid re-creating the callback on every render.
+  // Options:
+  //   { forceSeasonCheck?: boolean, onlyLive?: boolean }
+  const fetchGames = useCallback(
+    async (options = {}) => {
+      const { forceSeasonCheck = false, onlyLive = false } = options;
+
+      // Prevent overlapping fetches; allow a live-only refresh to run even if a full fetch is in-flight
+      if (fetchInFlightRef.current && !onlyLive) {
+        return;
+      }
+      if (!onlyLive) {
+        fetchInFlightRef.current = true;
+        setLoading(true);
+      }
+
+      const recheckSeasons = forceSeasonCheck || shouldRecheckSeasons();
+      const newSeasonCache = { ...seasonCacheRef.current };
+      const results = {};
+
+      // Determine which sports to fetch
+      let sportsToFetch;
+      if (onlyLive) {
+        const liveSlugs = getLiveSportsFromGamesData();
+        if (liveSlugs.length === 0) {
+          // fallback to fetch all (no live games known)
+          sportsToFetch = SPORTS;
+        } else {
+          const slugSet = new Set(liveSlugs);
+          sportsToFetch = SPORTS.filter((s) => slugSet.has(s.slug));
+        }
+      } else {
+        sportsToFetch = SPORTS;
+      }
+
+      // Perform concurrent fetches (Promise.allSettled). This is faster than serial fetches.
+      // If you run into rate-limiting, consider batching with a concurrency limit.
+      const promises = sportsToFetch.map((s) =>
+        fetchSport(s, { recheckSeasons })
+      );
+      const settled = await Promise.allSettled(promises);
+
+      // Process results
+      for (const r of settled) {
+        if (r.status !== "fulfilled" || !r.value) continue;
+        const { slug, value, inSeason } = r.value;
+        // Update season cache entry
+        newSeasonCache[slug] = !!inSeason;
+        if (value) {
+          results[slug] = value;
+        }
+      }
+
+      // Persist season cache if we rechecked
+      if (recheckSeasons) {
+        setSeasonCache(newSeasonCache);
+        seasonCacheRef.current = newSeasonCache;
+        const now = new Date();
+        setLastSeasonCheck(now);
+        lastSeasonCheckRef.current = now;
+      }
+
+      // Merge or replace gamesData depending on onlyLive
+      if (onlyLive) {
+        setGamesData((prev) => {
+          // copy previous and only overwrite the sports we fetched
+          const next = { ...prev };
+          for (const [slug, data] of Object.entries(results)) {
+            next[slug] = data;
+          }
+          // Remove sports we fetched that now have no games (results doesn't include nulls)
+          // but we want to leave non-fetched sports alone. For fetched slugs that returned no games,
+          // we should remove them if they had no games anymore.
+          for (const s of sportsToFetch) {
+            if (!results[s.slug] && next[s.slug]) {
+              // sport was fetched but returned no games -> delete
+              delete next[s.slug];
+            }
+          }
+          return next;
+        });
+      } else {
+        // full replace (only include sports that have games today)
+        setGamesData(results);
+      }
+
+      setLastUpdate(new Date());
+
+      if (!onlyLive) {
+        setLoading(false);
+        fetchInFlightRef.current = false;
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  ); // empty deps because we rely on refs for mutable state
 
   useEffect(() => {
-    // Defer calling fetchGames to the next tick so any setState it performs
-    // does not run synchronously inside this effect (avoids cascading renders)
+    // initial fetch (deferred to avoid synchronous setState in effect)
     const id = setTimeout(() => {
       fetchGames();
     }, 0);
     return () => clearTimeout(id);
-  }, [fetchGames]); // Now properly depends on fetchGames
+  }, [fetchGames]);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      fetchGames(false); // Don't force season check on auto-refresh
+      // auto-refresh: be conservative and refresh only sports we already have (faster)
+      fetchGames({ onlyLive: false }); // you can change this to { onlyLive: true } to only refresh live games automatically
     }, 60000); // Refresh every minute
     return () => clearInterval(interval);
-  }, [fetchGames]); // Depend on fetchGames
+  }, [fetchGames]);
 
   const formatGameDate = (dateString) => {
+    if (!dateString) return "TBD";
     const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      weekday: "short",
-      month: "short",
-      day: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
-    });
+    try {
+      return date.toLocaleDateString("en-US", {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+      });
+    } catch {
+      return date.toString();
+    }
   };
 
   const getStatusDisplay = (competition) => {
-    const status = competition.status;
-    if (status.type.state === "pre") {
+    const status = competition?.status;
+    const type = status?.type;
+    const state = type?.state;
+    if (!type || !state) {
+      return { text: "TBD", color: "text-gray-500", bg: "bg-gray-100" };
+    }
+    if (state === "pre") {
       return {
-        text: status.type.description,
+        text: type.description || "Pre-game",
         color: "text-gray-500",
         bg: "bg-gray-100",
       };
-    } else if (status.type.state === "in") {
+    } else if (state === "in") {
       return {
-        text: status.type.shortDetail,
+        text: type.shortDetail || type.detail || "In Progress",
         color: "text-red-600",
         bg: "bg-red-50",
       };
@@ -525,12 +686,16 @@ function App() {
   };
 
   const GameCard = ({ game }) => {
-    const competition = game.competitions[0];
-    const homeTeam = competition.competitors.find((t) => t.homeAway === "home");
-    const awayTeam = competition.competitors.find((t) => t.homeAway === "away");
+    const competition = game?.competitions?.[0] || {};
+    const homeTeam = (competition.competitors || []).find(
+      (t) => t.homeAway === "home"
+    );
+    const awayTeam = (competition.competitors || []).find(
+      (t) => t.homeAway === "away"
+    );
     const status = getStatusDisplay(competition);
-    const gameDate = formatGameDate(competition.startDate);
-    const broadcast = competition.broadcasts?.[0]?.names?.[0] || "";
+    const gameDate = formatGameDate(competition?.startDate);
+    const broadcast = competition?.broadcasts?.[0]?.names?.[0] || "";
 
     return (
       <div className="border rounded-lg p-4 bg-white shadow-sm hover:shadow-md transition-shadow">
@@ -547,25 +712,29 @@ function App() {
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 flex-1">
-              {awayTeam.team.logo && (
+              {awayTeam?.team?.logo && (
                 <img src={awayTeam.team.logo} alt="" className="w-8 h-8" />
               )}
-              <span className="font-medium">{awayTeam.team.displayName}</span>
+              <span className="font-medium">
+                {awayTeam?.team?.displayName || "Away"}
+              </span>
             </div>
             <span className="text-xl font-bold ml-4">
-              {awayTeam.score || "0"}
+              {awayTeam?.score ?? "0"}
             </span>
           </div>
 
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 flex-1">
-              {homeTeam.team.logo && (
+              {homeTeam?.team?.logo && (
                 <img src={homeTeam.team.logo} alt="" className="w-8 h-8" />
               )}
-              <span className="font-medium">{homeTeam.team.displayName}</span>
+              <span className="font-medium">
+                {homeTeam?.team?.displayName || "Home"}
+              </span>
             </div>
             <span className="text-xl font-bold ml-4">
-              {homeTeam.score || "0"}
+              {homeTeam?.score ?? "0"}
             </span>
           </div>
         </div>
@@ -580,13 +749,28 @@ function App() {
           <h1 className="text-3xl font-bold text-gray-800">Today's Games</h1>
           <button
             onClick={() => {
-              setLoading(true);
-              fetchGames();
+              // If we have no known games, do a full fetch; otherwise refresh only live games
+              if (Object.keys(gamesData).length === 0) {
+                setLoading(true);
+                fetchGames({ forceSeasonCheck: true }).finally(() =>
+                  setLoading(false)
+                );
+              } else {
+                setIsRefreshingLive(true);
+                // Refresh only live games (faster). We avoid setting global loading to reduce UI churn.
+                fetchGames({ onlyLive: true })
+                  .catch((err) => console.error(err))
+                  .finally(() => setIsRefreshingLive(false));
+              }
             }}
-            disabled={loading}
+            disabled={(loading && !isRefreshingLive) || isRefreshingLive}
             className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
           >
-            <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
+            <RefreshCw
+              className={`w-4 h-4 ${
+                loading || isRefreshingLive ? "animate-spin" : ""
+              }`}
+            />
             Refresh
           </button>
         </div>
