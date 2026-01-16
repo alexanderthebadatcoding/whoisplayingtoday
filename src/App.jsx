@@ -318,9 +318,9 @@ const SPORTS = [
     url: "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.wwc/scoreboard",
   },
   {
-    slug: "eng.1",
-    title: "English Premier League ⚽️",
-    url: "https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard",
+    slug: "nba.g",
+    title: "NBA G League 🏀",
+    url: "https://site.api.espn.com/apis/site/v2/sports/basketball/nba-development/scoreboard",
   },
   {
     slug: "eng.fa",
