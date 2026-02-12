@@ -133,11 +133,6 @@ const SPORTS = [
     url: "https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/scoreboard",
   },
   {
-    slug: "college-softball",
-    title: "College Softball 🥎",
-    url: "https://site.api.espn.com/apis/site/v2/sports/baseball/college-softball/scoreboard",
-  },
-  {
     slug: "dominican-winter-league",
     title: "Dominican Winter League ⚾",
     url: "https://site.api.espn.com/apis/site/v2/sports/baseball/dominican-winter-league/scoreboard",
@@ -338,6 +333,11 @@ const SPORTS = [
     url: "https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/scoreboard",
   },
   {
+    slug: "ned.1",
+    title: "Dutch Eredivisie ⚽️",
+    url: "https://site.api.espn.com/apis/site/v2/sports/soccer/ned.1/scoreboard",
+  },
+  {
     slug: "esp.super_cup",
     title: "Spanish Super Cup ⚽️",
     url: "https://site.api.espn.com/apis/site/v2/sports/soccer/esp.super_cup/scoreboard",
@@ -397,6 +397,11 @@ const SPORTS = [
     title: "French Super Cup ⚽️",
     url: "https://site.api.espn.com/apis/site/v2/sports/soccer/fra.super_cup/scoreboard",
   },
+  {
+    slug: "college-softball",
+    title: "College Softball 🥎",
+    url: "https://site.api.espn.com/apis/site/v2/sports/baseball/college-softball/scoreboard",
+  }
 ];
 
 function App() {
