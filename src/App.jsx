@@ -127,11 +127,7 @@ const SPORTS = [
     title: "Caribbean Series ⚾",
     url: "https://site.api.espn.com/apis/site/v2/sports/baseball/caribbean-series/scoreboard",
   },
-  {
-    slug: "college-baseball",
-    title: "College Baseball ⚾",
-    url: "https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/scoreboard",
-  },
+
   {
     slug: "dominican-winter-league",
     title: "Dominican Winter League ⚾",
@@ -318,11 +314,6 @@ const SPORTS = [
     url: "https://site.api.espn.com/apis/site/v2/sports/basketball/nba-development/scoreboard",
   },
   {
-    slug: "eng.fa",
-    title: "English FA Cup ⚽️",
-    url: "https://site.api.espn.com/apis/site/v2/sports/soccer/eng.fa/scoreboard",
-  },
-  {
     slug: "eng.league_cup",
     title: "English League Cup ⚽️",
     url: "https://site.api.espn.com/apis/site/v2/sports/soccer/eng.league_cup/scoreboard",
@@ -401,6 +392,11 @@ const SPORTS = [
     slug: "college-softball",
     title: "College Softball 🥎",
     url: "https://site.api.espn.com/apis/site/v2/sports/baseball/college-softball/scoreboard",
+  },
+  {
+    slug: "college-baseball",
+    title: "College Baseball ⚾",
+    url: "https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/scoreboard",
   }
 ];
 
