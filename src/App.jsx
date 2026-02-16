@@ -319,11 +319,6 @@ const SPORTS = [
     url: "https://site.api.espn.com/apis/site/v2/sports/soccer/eng.league_cup/scoreboard",
   },
   {
-    slug: "esp.1",
-    title: "Spanish La Liga ⚽️",
-    url: "https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/scoreboard",
-  },
-  {
     slug: "ned.1",
     title: "Dutch Eredivisie ⚽️",
     url: "https://site.api.espn.com/apis/site/v2/sports/soccer/ned.1/scoreboard",
