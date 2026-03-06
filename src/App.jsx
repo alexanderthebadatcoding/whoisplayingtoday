@@ -144,6 +144,11 @@ const SPORTS = [
     url: "https://site.api.espn.com/apis/site/v2/sports/baseball/olympics-baseball/scoreboard",
   },
   {
+    slug: "world-baseball",
+    title: "World Baseball Classic⚾",
+    url: "https://site.api.espn.com/apis/site/v2/sports/baseball/world-baseball-classic/scoreboard",
+  },
+  {
     slug: "mls",
     title: "MLS ⚽️",
     url: "https://site.api.espn.com/apis/site/v2/sports/soccer/usa.1/scoreboard",
