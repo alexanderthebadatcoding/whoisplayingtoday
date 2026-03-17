@@ -32,7 +32,7 @@ const SPORTS = [
     title: "Men's College Basketball 🏀",
     url: "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard",
   },
-  
+  {
     slug: "NIT",
     title: "NIT 🏀",
     url: "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard?groups=98",
