@@ -82,16 +82,7 @@ const SPORTS = [
     title: "CFL 🏈",
     url: "https://site.api.espn.com/apis/site/v2/sports/football/cfl/scoreboard",
   },
-  {
-    slug: "ufl",
-    title: "UFL 🏈",
-    url: "https://site.api.espn.com/apis/site/v2/sports/football/ufl/scoreboard",
-  },
-  {
-    slug: "xfl",
-    title: "XFL 🏈",
-    url: "https://site.api.espn.com/apis/site/v2/sports/football/xfl/scoreboard",
-  },
+
   {
     slug: "hockey-world-cup",
     title: "Hockey World Cup 🏒",
@@ -392,6 +383,16 @@ const SPORTS = [
     slug: "fra.super_cup",
     title: "French Super Cup ⚽️",
     url: "https://site.api.espn.com/apis/site/v2/sports/soccer/fra.super_cup/scoreboard",
+  },
+  {
+    slug: "ufl",
+    title: "UFL 🏈",
+    url: "https://site.api.espn.com/apis/site/v2/sports/football/ufl/scoreboard",
+  },
+  {
+    slug: "xfl",
+    title: "XFL 🏈",
+    url: "https://site.api.espn.com/apis/site/v2/sports/football/xfl/scoreboard",
   },
   {
     slug: "college-softball",
