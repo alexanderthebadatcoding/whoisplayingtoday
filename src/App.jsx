@@ -393,16 +393,6 @@ const SPORTS = [
     slug: "xfl",
     title: "XFL 🏈",
     url: "https://site.api.espn.com/apis/site/v2/sports/football/xfl/scoreboard",
-  },
-  {
-    slug: "college-softball",
-    title: "College Softball 🥎",
-    url: "https://site.api.espn.com/apis/site/v2/sports/baseball/college-softball/scoreboard",
-  },
-  {
-    slug: "college-baseball",
-    title: "College Baseball ⚾",
-    url: "https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/scoreboard",
   }
 ];
 
