@@ -385,6 +385,12 @@ const SPORTS = [
     url: "https://site.api.espn.com/apis/site/v2/sports/soccer/fra.super_cup/scoreboard",
   },
   {
+    slug: "conmebol.sudamericana",
+    title: "Copa Sudamericana ⚽️",
+    url: "https://site.api.espn.com/apis/site/v2/sports/soccer/conmebol.sudamericana/scoreboard",
+  },
+
+  {
     slug: "ufl",
     title: "UFL 🏈",
     url: "https://site.api.espn.com/apis/site/v2/sports/football/ufl/scoreboard",
@@ -393,7 +399,7 @@ const SPORTS = [
     slug: "xfl",
     title: "XFL 🏈",
     url: "https://site.api.espn.com/apis/site/v2/sports/football/xfl/scoreboard",
-  }
+  },
 ];
 
 function App() {
@@ -512,7 +518,7 @@ function App() {
       const todaysGames =
         Array.isArray(data.events) && data.events.length > 0
           ? data.events.filter((event) =>
-              isToday(event?.competitions?.[0]?.startDate)
+              isToday(event?.competitions?.[0]?.startDate),
             )
           : [];
 
@@ -572,7 +578,7 @@ function App() {
       // Perform concurrent fetches (Promise.allSettled). This is faster than serial fetches.
       // If you run into rate-limiting, consider batching with a concurrency limit.
       const promises = sportsToFetch.map((s) =>
-        fetchSport(s, { recheckSeasons })
+        fetchSport(s, { recheckSeasons }),
       );
       const settled = await Promise.allSettled(promises);
 
@@ -628,7 +634,7 @@ function App() {
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [],
   ); // empty deps because we rely on refs for mutable state
 
   useEffect(() => {
@@ -689,11 +695,13 @@ function App() {
 
   const GameCard = ({ game }) => {
     const competition = game?.competitions?.[0] || {};
+    const headline =
+      competition?.notes?.[0]?.headline || competition?.series?.summary || "";
     const homeTeam = (competition.competitors || []).find(
-      (t) => t.homeAway === "home"
+      (t) => t.homeAway === "home",
     );
     const awayTeam = (competition.competitors || []).find(
-      (t) => t.homeAway === "away"
+      (t) => t.homeAway === "away",
     );
     const status = getStatusDisplay(competition);
     const gameDate = formatGameDate(competition?.startDate);
@@ -739,6 +747,9 @@ function App() {
               {homeTeam?.score ?? "0"}
             </span>
           </div>
+          {headline && (
+            <span className="text-sm text-gray-500">{headline}</span>
+          )}
         </div>
       </div>
     );
@@ -755,7 +766,7 @@ function App() {
               if (Object.keys(gamesData).length === 0) {
                 setLoading(true);
                 fetchGames({ forceSeasonCheck: true }).finally(() =>
-                  setLoading(false)
+                  setLoading(false),
                 );
               } else {
                 setIsRefreshingLive(true);
