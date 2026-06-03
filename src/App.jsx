@@ -389,7 +389,12 @@ const SPORTS = [
     title: "Copa Sudamericana ⚽️",
     url: "https://site.api.espn.com/apis/site/v2/sports/soccer/conmebol.sudamericana/scoreboard",
   },
-
+ // usa.usl.l1.cup
+{
+    slug: "usa.usl.l1.cup",
+    title: "USL Cup⚽️",
+    url: "https://site.api.espn.com/apis/site/v2/sports/soccer/usa.usl.l1.cup/scoreboard",
+  },
   {
     slug: "ufl",
     title: "UFL 🏈",
