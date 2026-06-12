@@ -300,11 +300,6 @@ const SPORTS = [
     url: "https://site.api.espn.com/apis/site/v2/sports/soccer/usa.ncaa.w.1/scoreboard",
   },
   {
-    slug: "fifa.world",
-    title: "FIFA World Cup ⚽️",
-    url: "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard",
-  },
-  {
     slug: "fifa.wwc",
     title: "FIFA Women's World Cup ⚽️",
     url: "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.wwc/scoreboard",
