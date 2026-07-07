@@ -3,6 +3,11 @@ import { RefreshCw } from "lucide-react";
 
 const SPORTS = [
   {
+    slug: "WorldCup",
+    title: "FIFA World Cup ⚽️",
+    url: "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard",
+  },
+  {
     slug: "nba",
     title: "NBA 🏀",
     url: "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard",
@@ -16,11 +21,6 @@ const SPORTS = [
     slug: "wnba",
     title: "WNBA 🏀",
     url: "https://site.api.espn.com/apis/site/v2/sports/basketball/wnba/scoreboard",
-  },
-  {
-    slug: "nbaSummer",
-    title: "NBA Summer League",
-    url: "https://site.api.espn.com/apis/site/v2/sports/basketball/nba-summer/scoreboard",
   },
   {
     slug: "fiba",
@@ -214,10 +214,10 @@ const SPORTS = [
     title: "Supercoppa Italiana ⚽️",
     url: "https://site.api.espn.com/apis/site/v2/sports/soccer/ita.super_cup/scoreboard",
   },
-  {
-    slug: "WorldCup",
-    title: "FIFA World Cup ⚽️",
-    url: "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard",
+	{
+    slug: "uefa.champions_qual",
+    title: "UEFA Champions Qualifying ⚽️",
+    url: "https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.champions_qual/scoreboard",
   },
   {
     slug: "cafNations",
@@ -400,6 +400,11 @@ const SPORTS = [
     title: "XFL 🏈",
     url: "https://site.api.espn.com/apis/site/v2/sports/football/xfl/scoreboard",
   },
+  {
+    slug: "nbaSummer",
+    title: "NBA Summer League",
+    url: "https://site.api.espn.com/apis/site/v2/sports/basketball/nba-summer/scoreboard",
+  }
 ];
 
 function App() {
