@@ -200,11 +200,6 @@ const SPORTS = [
     url: "https://site.api.espn.com/apis/site/v2/sports/soccer/concacaf.champions/scoreboard",
   },
   {
-    slug: "concacafLeagues",
-    title: "Concacaf Leagues Cup ⚽️",
-    url: "https://site.api.espn.com/apis/site/v2/sports/soccer/concacaf.leagues.cup/scoreboard",
-  },
-  {
     slug: "italiaSerieA",
     title: "Italy Serie A ⚽️",
     url: "https://site.api.espn.com/apis/site/v2/sports/soccer/ita.1/scoreboard",
