@@ -8,6 +8,11 @@ const SPORTS = [
     url: "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard",
   },
   {
+    slug: "WorldCup",
+    title: "UEFA Super Cup⚽️",
+    url: "https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.super_cup/scoreboard",
+  }, 
+  {
     slug: "nba",
     title: "NBA 🏀",
     url: "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard",
