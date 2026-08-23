@@ -18,21 +18,6 @@ const SPORTS = [
     url: "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard",
   },
   {
-    slug: "ncaav",
-    title: "College Womens Volleyball 🏐",
-    url: "https://site.api.espn.com/apis/site/v2/sports/volleyball/womens-college-volleyball/scoreboard",
-  },
-  {
-    slug: "wnba",
-    title: "WNBA 🏀",
-    url: "https://site.api.espn.com/apis/site/v2/sports/basketball/wnba/scoreboard",
-  },
-  {
-    slug: "fiba",
-    title: "FIBA 🏀",
-    url: "https://site.api.espn.com/apis/site/v2/sports/basketball/fiba/scoreboard",
-  },
-  {
     slug: "mens-college-basketball",
     title: "Men's College Basketball 🏀",
     url: "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard",
@@ -56,11 +41,6 @@ const SPORTS = [
     slug: "mens-olympics-basketball",
     title: "Men's Olympic Basketball 🏀",
     url: "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-olympics-basketball/scoreboard",
-  },
-  {
-    slug: "nbl",
-    title: "NBL 🏀",
-    url: "https://site.api.espn.com/apis/site/v2/sports/basketball/nbl/scoreboard",
   },
   {
     slug: "womens-college-basketball",
@@ -404,6 +384,26 @@ const SPORTS = [
     slug: "nbaSummer",
     title: "NBA Summer League",
     url: "https://site.api.espn.com/apis/site/v2/sports/basketball/nba-summer/scoreboard",
+  },
+  {
+    slug: "ncaav",
+    title: "College Womens Volleyball 🏐",
+    url: "https://site.api.espn.com/apis/site/v2/sports/volleyball/womens-college-volleyball/scoreboard",
+  },
+  {
+    slug: "wnba",
+    title: "WNBA 🏀",
+    url: "https://site.api.espn.com/apis/site/v2/sports/basketball/wnba/scoreboard",
+  },
+  {
+    slug: "fiba",
+    title: "FIBA 🏀",
+    url: "https://site.api.espn.com/apis/site/v2/sports/basketball/fiba/scoreboard",
+  },
+  {
+    slug: "nbl",
+    title: "NBL 🏀",
+    url: "https://site.api.espn.com/apis/site/v2/sports/basketball/nbl/scoreboard",
   }
 ];
 
