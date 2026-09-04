@@ -248,7 +248,7 @@ const SPORTS = [
 {
     slug: "fbs",
     title: "FBS 🏈",
-    url: "b",
+    url: "https://site.api.espn.com/apis/site/v2/sports/football/cfl/scoreboard?groups=80",
   },
   {
     slug: "worldq",
