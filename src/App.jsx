@@ -244,6 +244,12 @@ const SPORTS = [
     title: "FIFA World Cup Qualifying - Concacaf",
     url: "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.worldq.concacaf/scoreboard",
   },
+  // fbs 
+{
+    slug: "fbs",
+    title: "FBS 🏈",
+    url: "b",
+  },
   {
     slug: "worldq",
     title: "World Cup Qualifying - UEFA",
