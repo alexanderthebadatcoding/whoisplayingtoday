@@ -60,7 +60,7 @@ const SPORTS = [
   {
     slug: "cfb",
     title: "College Football 🏈",
-    url: "https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard",
+    url: "https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?groups=80",
   },
   {
     slug: "cfl",
@@ -245,11 +245,12 @@ const SPORTS = [
     url: "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.worldq.concacaf/scoreboard",
   },
   // fbs 
-{
-    slug: "fbs",
-    title: "FBS 🏈",
-    url: "https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?groups=80",
-  },
+// {
+    // slug: "fbs",
+    // title: "FBS 🏈",
+    // url: "https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?groups=80",
+  // },
+
   {
     slug: "worldq",
     title: "World Cup Qualifying - UEFA",
