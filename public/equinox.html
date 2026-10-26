@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<title>Today's Games</title>
+<style>
+  :root {
+    --tile-gap: 6px;   /* space between matchups */
+    --cell-gap: 2px;   /* space between home and away cell */
+    --logo-size: 72%;  /* logo size inside its cell */
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: #000;
+    overflow: hidden;
+  }
+  #grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tile-gap);
+    height: 100vh;
+    height: 100dvh;
+    width: 100vw;
+    padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px)
+             env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+  }
+  .row {
+    flex: 1 1 0;
+    min-height: 0;
+    display: flex;
+    gap: var(--tile-gap);
+  }
+  .tile {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    gap: var(--cell-gap);
+    text-decoration: none;
+    outline-offset: -3px;
+    transition: filter .15s ease, transform .15s ease;
+  }
+  .tile:hover, .tile:focus-visible { filter: brightness(1.15); }
+  .tile:active { transform: scale(.985); }
+  .tile:focus-visible { outline: 3px solid #fff; }
+  .cell {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .cell img {
+    width: var(--logo-size);
+    height: var(--logo-size);
+    object-fit: contain;
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+  #empty {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    color: #555;
+    font: 500 14px/1 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    letter-spacing: .08em;
+  }
+  #empty.show { display: flex; }
+</style>
+</head>
+<body>
+<div id="grid"></div>
+<div id="empty">NO GAMES TODAY</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var LEAGUES = [
+    { key: "nfl",  path: "football/nfl" },
+    { key: "mlb",  path: "baseball/mlb" },
+    { key: "nba",  path: "basketball/nba" },
+    { key: "nhl",  path: "hockey/nhl" },
+    { key: "wnba", path: "basketball/wnba" }
+  ];
+  var API = "https://site.api.espn.com/apis/site/v2/sports/";
+  var REFRESH_MS = 60 * 1000;
+  var FALLBACK_BG = "#3c3c3c";
+  var STATE_ORDER = { "in": 0, "pre": 1, "post": 2 };   // live, upcoming, completed
+
+  var gridEl = document.getElementById("grid");
+  var emptyEl = document.getElementById("empty");
+  var games = [];
+  var signature = "";
+
+  function ymd(d) {
+    return d.getFullYear() + String(d.getMonth() + 1).padStart(2, "0") + String(d.getDate()).padStart(2, "0");
+  }
+
+  function sameLocalDay(a, b) {
+    return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+  }
+
+  function colorOf(team) {
+    var c = team.alternateColor || team.color;
+    return /^[0-9a-fA-F]{6}$/.test(c || "") ? "#" + c : FALLBACK_BG;
+  }
+
+  function logoOf(team) {
+    if (team.logo) return team.logo;
+    if (team.logos && team.logos.length) return team.logos[0].href;
+    return "";
+  }
+
+  // ESPN's own Game Center link from the API, with a constructed fallback.
+  function gameLink(ev, league) {
+    var links = ev.links || [];
+    var pick = null, i, rel;
+    for (i = 0; i < links.length; i++) {
+      rel = links[i].rel || [];
+      if (rel.indexOf("summary") !== -1 && rel.indexOf("desktop") !== -1) { pick = links[i]; break; }
+    }
+    if (!pick) {
+      for (i = 0; i < links.length; i++) {
+        rel = links[i].rel || [];
+        if (rel.indexOf("summary") !== -1) { pick = links[i]; break; }
+      }
+    }
+    if (pick && pick.href) return pick.href;
+    return "https://www.espn.com/" + league.key + "/game/_/gameId/" + ev.id;
+  }
+
+  async function fetchLeague(league) {
+    var now = new Date();
+    var tomorrow = new Date(now.getTime() + 24 * 3600 * 1000);
+    // today + tomorrow (ESPN's day boundary is Eastern), then filter to the viewer's local day
+    var url = API + league.path + "/scoreboard?dates=" + ymd(now) + "-" + ymd(tomorrow) + "&limit=300";
+    var res = await fetch(url);
+    if (!res.ok) throw new Error(league.key + " " + res.status);
+    var data = await res.json();
+    var seen = {}, out = [];
+    (data.events || []).forEach(function (ev) {
+      try {
+        if (seen[ev.id]) return;
+        seen[ev.id] = true;
+        if (!sameLocalDay(new Date(ev.date), now)) return;
+        var comp = ev.competitions[0];
+        var home = comp.competitors.filter(function (c) { return c.homeAway === "home"; })[0];
+        var away = comp.competitors.filter(function (c) { return c.homeAway === "away"; })[0];
+        out.push({
+          id: league.key + ev.id,
+          date: ev.date,
+          state: ev.status.type.state,
+          href: gameLink(ev, league),
+          home: { bg: colorOf(home.team), logo: logoOf(home.team) },
+          away: { bg: colorOf(away.team), logo: logoOf(away.team) }
+        });
+      } catch (e) { /* skip malformed event */ }
+    });
+    out.sort(function (a, b) {
+      var s = (STATE_ORDER[a.state] === undefined ? 3 : STATE_ORDER[a.state]) -
+              (STATE_ORDER[b.state] === undefined ? 3 : STATE_ORDER[b.state]);
+      return s || (a.date < b.date ? -1 : a.date > b.date ? 1 : 0);
+    });
+    return out;
+  }
+
+  async function load() {
+    var results = await Promise.all(LEAGUES.map(function (l) {
+      return fetchLeague(l).catch(function () { return null; });
+    }));
+    // if everything failed (offline), keep what's on screen
+    if (results.every(function (r) { return r === null; })) return;
+    games = [].concat.apply([], results.map(function (r) { return r || []; }));
+    render(true);
+  }
+
+  // Choose how many rows so tiles come out close to 2:1 (two squares side by side),
+  // then spread games over the rows as evenly as possible so the page is always full.
+  function pickRows(n, W, H) {
+    var best = 1, bestScore = Infinity, r;
+    for (r = 1; r <= n; r++) {
+      var perRow = Math.ceil(n / r);
+      var aspect = (W / perRow) / (H / r);
+      var score = Math.abs(Math.log(aspect / 2));
+      if (score < bestScore) { bestScore = score; best = r; }
+    }
+    return best;
+  }
+
+  function makeCell(side) {
+    var cell = document.createElement("div");
+    cell.className = "cell";
+    cell.style.background = side.bg;
+    if (side.logo) {
+      var img = document.createElement("img");
+      img.src = side.logo;
+      img.alt = "";
+      img.draggable = false;
+      cell.appendChild(img);
+    }
+    return cell;
+  }
+
+  function makeTile(g) {
+    var a = document.createElement("a");
+    a.className = "tile";
+    a.href = g.href;
+    a.target = "_blank";
+    a.rel = "noopener noreferrer";
+    a.setAttribute("aria-label", "Open game in ESPN Game Center");
+    a.appendChild(makeCell(g.home));
+    a.appendChild(makeCell(g.away));
+    return a;
+  }
+
+  function render(fromData) {
+    var sig = games.map(function (g) { return g.id + g.state; }).join("|") +
+              "@" + window.innerWidth + "x" + window.innerHeight;
+    if (fromData && sig === signature) return;     // nothing changed, avoid flicker
+    signature = sig;
+
+    gridEl.textContent = "";
+    var n = games.length;
+    emptyEl.classList.toggle("show", n === 0);
+    if (!n) return;
+
+    var rows = pickRows(n, window.innerWidth, window.innerHeight);
+    var base = Math.floor(n / rows), extra = n % rows, idx = 0, r, c;
+    for (r = 0; r < rows; r++) {
+      var count = base + (r < extra ? 1 : 0);
+      var row = document.createElement("div");
+      row.className = "row";
+      for (c = 0; c < count; c++) row.appendChild(makeTile(games[idx++]));
+      gridEl.appendChild(row);
+    }
+  }
+
+  var resizeTimer;
+  window.addEventListener("resize", function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function () { render(false); }, 120);
+  });
+
+  document.addEventListener("visibilitychange", function () {
+    if (!document.hidden) load();
+  });
+
+  load();
+  setInterval(load, REFRESH_MS);
+})();
+</script>
+</body>
+</html>
