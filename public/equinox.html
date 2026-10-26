@@ -99,10 +99,6 @@
   var games = [];
   var signature = "";
 
-  function ymd(d) {
-    return d.getFullYear() + String(d.getMonth() + 1).padStart(2, "0") + String(d.getDate()).padStart(2, "0");
-  }
-
   function sameLocalDay(a, b) {
     return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
   }
@@ -138,9 +134,8 @@
 
   async function fetchLeague(league) {
     var now = new Date();
-    var tomorrow = new Date(now.getTime() + 24 * 3600 * 1000);
-    // today + tomorrow (ESPN's day boundary is Eastern), then filter to the viewer's local day
-    var url = API + league.path + "/scoreboard?dates=" + ymd(now) + "-" + ymd(tomorrow) + "&limit=300";
+    // plain scoreboard endpoint; today's games are filtered in JS below
+    var url = API + league.path + "/scoreboard";
     var res = await fetch(url);
     if (!res.ok) throw new Error(league.key + " " + res.status);
     var data = await res.json();
