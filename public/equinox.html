@@ -103,25 +103,61 @@
     return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
   }
 
+
 function colorOf(team) {
   var primary = (team.color || "").replace(/^#/, "");
   var alternate = (team.alternateColor || "").replace(/^#/, "");
 
+  function isValid(color) {
+    return /^[0-9a-fA-F]{6}$/.test(color);
+  }
+
   function isBlackOrWhite(color) {
-    return /^(ffffff|000000)$/i.test(color);
+    return /^(000000|ffffff)$/i.test(color);
   }
 
-  // Prefer the alternate color when the primary is black or white.
-  var c = isBlackOrWhite(primary) ? alternate : primary;
+  // Calculate relative luminance using the WCAG formula.
+  function luminance(color) {
+    var rgb = [
+      parseInt(color.substring(0, 2), 16),
+      parseInt(color.substring(2, 4), 16),
+      parseInt(color.substring(4, 6), 16)
+    ].map(function (v) {
+      v = v / 255;
+      return v <= 0.04045
+        ? v / 12.92
+        : Math.pow((v + 0.055) / 1.055, 2.4);
+    });
 
-  // If the selected color is invalid or still black/white, use the fallback.
-  if (!/^[0-9a-fA-F]{6}$/.test(c) || isBlackOrWhite(c)) {
-    return FALLBACK_BG;
+    return 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2];
   }
 
-  return "#" + c;
+  // Contrast ratio against the black page background.
+  function contrast(color) {
+    return (luminance(color) + 0.05) / 0.05;
+  }
+
+  var candidates = [primary, alternate].filter(function (color, index, arr) {
+    return isValid(color) &&
+      !isBlackOrWhite(color) &&
+      arr.indexOf(color) === index;
+  });
+
+  if (!candidates.length) {
+    // If neither team color works, try either valid color.
+    candidates = [primary, alternate].filter(isValid);
+  }
+
+  if (!candidates.length) return FALLBACK_BG;
+
+  candidates.sort(function (a, b) {
+    return contrast(b) - contrast(a);
+  });
+
+  return "#" + candidates[0];
 }
 
+  
   function logoOf(team) {
     if (team.logo) return team.logo;
     if (team.logos && team.logos.length) return team.logos[0].href;
