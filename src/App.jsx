@@ -11,7 +11,17 @@ const SPORTS = [
     slug: "WorldCup",
     title: "UEFA Super Cup⚽️",
     url: "https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.super_cup/scoreboard",
-  }, 
+  },
+  {
+    slug: "nfl",
+    title: "NFL 🏈",
+    url: "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard",
+  },
+  {
+    slug: "cfb",
+    title: "College Football 🏈",
+    url: "https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?groups=80",
+  },
   {
     slug: "nba",
     title: "NBA 🏀",
@@ -53,21 +63,10 @@ const SPORTS = [
     url: "https://site.api.espn.com/apis/site/v2/sports/basketball/womens-olympics-basketball/scoreboard",
   },
   {
-    slug: "nfl",
-    title: "NFL 🏈",
-    url: "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard",
-  },
-  {
-    slug: "cfb",
-    title: "College Football 🏈",
-    url: "https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?groups=80",
-  },
-  {
     slug: "cfl",
     title: "CFL 🏈",
     url: "https://site.api.espn.com/apis/site/v2/sports/football/cfl/scoreboard",
   },
-
   {
     slug: "hockey-world-cup",
     title: "Hockey World Cup 🏒",
@@ -108,7 +107,6 @@ const SPORTS = [
     title: "Caribbean Series ⚾",
     url: "https://site.api.espn.com/apis/site/v2/sports/baseball/caribbean-series/scoreboard",
   },
-
   {
     slug: "dominican-winter-league",
     title: "Dominican Winter League ⚾",
@@ -194,7 +192,7 @@ const SPORTS = [
     title: "Supercoppa Italiana ⚽️",
     url: "https://site.api.espn.com/apis/site/v2/sports/soccer/ita.super_cup/scoreboard",
   },
-	{
+  {
     slug: "uefa.champions_qual",
     title: "UEFA Champions Qualifying ⚽️",
     url: "https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.champions_qual/scoreboard",
@@ -244,13 +242,6 @@ const SPORTS = [
     title: "FIFA World Cup Qualifying - Concacaf",
     url: "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.worldq.concacaf/scoreboard",
   },
-  // fbs 
-// {
-    // slug: "fbs",
-    // title: "FBS 🏈",
-    // url: "https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?groups=80",
-  // },
-
   {
     slug: "worldq",
     title: "World Cup Qualifying - UEFA",
@@ -371,8 +362,7 @@ const SPORTS = [
     title: "Copa Sudamericana ⚽️",
     url: "https://site.api.espn.com/apis/site/v2/sports/soccer/conmebol.sudamericana/scoreboard",
   },
- // usa.usl.l1.cup
-{
+  {
     slug: "usa.usl.l1.cup",
     title: "USL Cup⚽️",
     url: "https://site.api.espn.com/apis/site/v2/sports/soccer/usa.usl.l1.cup/scoreboard",
@@ -411,7 +401,7 @@ const SPORTS = [
     slug: "nbl",
     title: "NBL 🏀",
     url: "https://site.api.espn.com/apis/site/v2/sports/basketball/nbl/scoreboard",
-  }
+  },
 ];
 
 function App() {
