@@ -364,8 +364,8 @@ const SPORTS = [
   },
   {
     slug: "usa.usl.l1.cup",
-    title: "USL Cup⚽️",
-    url: "https://site.api.espn.com/apis/site/v2/sports/soccer/usa.usl.l1.cup/scoreboard",
+    title: "USL ⚽️",
+    url: "https://site.api.espn.com/apis/site/v2/sports/soccer/usa.usl.l1/scoreboard",
   },
   {
     slug: "ufl",
